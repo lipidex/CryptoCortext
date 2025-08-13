@@ -202,6 +202,69 @@ void Operations::poly_relu(BatchDataset& input)
     input.execute(op);
 }
 
+void Operations::apply_poly(BatchDataset& input, std::vector<ElementDataset*> consts)
+{
+    simple_lambda op = [consts](std::vector<std::vector<std::vector<ElementDataset*>>> data)
+    {
+        std::vector<std::vector<std::vector<ElementDataset*>>> output;
+
+        for (size_t i=0; i<data.size(); i++)
+        {
+            std::vector<std::vector<ElementDataset*>> sub_output;
+
+            for (size_t j=0; j<data[i].size(); j++)
+            {
+                std::vector<ElementDataset*> result;
+
+                for (int k=0; k<data[i][j].size(); k++)
+                {
+                    ElementDataset* _pow_x = data[i][j][k]->clone();
+
+                    double domain = 12.31;
+
+                    std::vector<double> _dn = std::vector<double>(batch_size, 1/domain);
+                    ElementDataset* dn = new NormalDataset(_dn);
+                    *(_pow_x) *= *(dn); // Contain final result
+
+                    ElementDataset* _base_x = _pow_x->clone(); // Contain initial value of x
+                    // ElementDataset* _pow_x = el->clone(); // Contain multiple of x
+
+                    ElementDataset* el = consts[0]->clone();
+                    for (int v=1; v<consts.size(); v++)
+                    {
+                        if (v >= 2)
+                        {
+                            *(_pow_x) *= *(_base_x); // Calculate new power of x
+                        }
+
+                        ElementDataset* mon = _pow_x->clone(); // Use clone
+
+                        *(mon) *= *(consts[v]); // Multiply with constant
+
+                        *(el) += *(mon); // Add to result
+                        delete mon; // Delete clone
+                    }
+
+                    result.push_back(el);
+
+                    delete data[i][j][k];
+                    delete _base_x;
+                    delete _pow_x;
+                    delete dn;
+                }
+
+                sub_output.push_back(result);
+            }
+
+            output.push_back(sub_output);
+        }
+
+        return output;
+    };
+
+    input.execute(op);
+}
+
 void Operations::avg_pooling(BatchDataset& input, size_t filter_rows, size_t filter_cols, size_t stride_rows, size_t stride_cols, ElementDataset* divisor)
 {
     simple_lambda op = [filter_rows, filter_cols, stride_rows, stride_cols, divisor](std::vector<std::vector<std::vector<ElementDataset*>>> data)

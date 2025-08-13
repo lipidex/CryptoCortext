@@ -24,6 +24,8 @@ public:
 
     static std::vector<ElementDataset*> load_conv_bias(HEops heops, int level);
 
+    static std::vector<ElementDataset*> load_poly_consts(HEops heops, int level);
+
     static std::vector<BatchDataset> load_dataset_x(HEops heops, const char* filename, size_t batch_size, size_t rows, size_t cols, size_t channels);
 
     static std::vector<long> load_dataset_y(const char* filename, size_t rows);

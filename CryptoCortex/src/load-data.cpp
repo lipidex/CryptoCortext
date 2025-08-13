@@ -157,6 +157,17 @@ std::vector<ElementDataset*> LoadData::load_conv_bias(HEops heops, int level)
     return load_bias(heops, filename);
 }
 
+std::vector<ElementDataset*> LoadData::load_poly_consts(HEops heops, int level)
+{
+    printf("Poly consts %d\n", level+1);
+
+    char filename[50];
+    sprintf(filename, "model/poly_consts_%d.npy", level);
+    printf("Filename: %s\n", filename);
+
+    return load_bias(heops, filename);
+}
+
 std::vector<BatchDataset> LoadData::load_dataset_x(HEops heops, const char* filename, size_t batch_size, size_t rows, size_t cols, size_t channels)
 {
     std::vector<float> input = npy::read_npy<float>(filename).data;

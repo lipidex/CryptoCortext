@@ -3,6 +3,7 @@
 
 #include <neu-net.h>
 #include <layer-dense.h>
+#include <layer-act.h>
 #include <layer-flatter.h>
 #include <load-data.h>
 #include <config.h>
@@ -13,7 +14,8 @@ int main()
 
     std::vector<Layer*> layers;
     layers.push_back(new Flatter());
-    layers.push_back(new Dense(&heops, 0, 784, 128, true));
+    layers.push_back(new Dense(&heops, 0, 784, 128));
+    layers.push_back(new Act(&heops, 0));
     layers.push_back(new Dense(&heops, 1, 128, 10));
 
     NeuralNetwork neural_network(&heops, layers);
