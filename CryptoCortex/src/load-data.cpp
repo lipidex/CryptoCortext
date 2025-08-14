@@ -135,6 +135,28 @@ std::vector<ElementDataset*> LoadData::load_bias(HEops heops, char* filename)
     return _biases;
 }
 
+std::vector<ElementDataset*> LoadData::load_poly(HEops heops, char* filename)
+{
+    std::vector<double> _npy_d = npy::read_npy<double>(filename).data;
+
+    std::vector<ElementDataset*> _biases;
+    for (int i=0; i<_npy_d.size(); i++)
+    {
+        ElementDataset* el;
+        if (enable_helib)
+            el = static_cast<ElementDataset*>(new PlainDataset(heops.plaintext(std::vector<double>(batch_size, _npy_d[i]))));
+        else
+            el = static_cast<ElementDataset*>(new NormalDataset(std::vector<double>(batch_size, _npy_d[i])));
+        
+        _biases.push_back(el);
+    }
+
+    printf("Size: %ld\n", _biases.size());
+    std::cout << std::endl;
+
+    return _biases;
+}
+
 std::vector<ElementDataset*> LoadData::load_dense_bias(HEops heops, int level)
 {
     printf("Dense bias %d\n", level+1);
@@ -165,7 +187,7 @@ std::vector<ElementDataset*> LoadData::load_poly_consts(HEops heops, int level)
     sprintf(filename, "model/poly_consts_%d.npy", level);
     printf("Filename: %s\n", filename);
 
-    return load_bias(heops, filename);
+    return load_poly(heops, filename);
 }
 
 std::vector<BatchDataset> LoadData::load_dataset_x(HEops heops, const char* filename, size_t batch_size, size_t rows, size_t cols, size_t channels)

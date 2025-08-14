@@ -220,11 +220,11 @@ void Operations::apply_poly(BatchDataset& input, std::vector<ElementDataset*> co
                 {
                     ElementDataset* _pow_x = data[i][j][k]->clone();
 
-                    double domain = 12.31;
+                    double domain = 14.29;
 
-                    std::vector<double> _dn = std::vector<double>(batch_size, 1/domain);
-                    ElementDataset* dn = new NormalDataset(_dn);
-                    *(_pow_x) *= *(dn); // Contain final result
+                    std::vector<double> _dd = std::vector<double>(batch_size, 1/domain);
+                    ElementDataset* dd = new NormalDataset(_dd);
+                    *(_pow_x) *= *(dd); // Contain final result
 
                     ElementDataset* _base_x = _pow_x->clone(); // Contain initial value of x
                     // ElementDataset* _pow_x = el->clone(); // Contain multiple of x
@@ -245,12 +245,18 @@ void Operations::apply_poly(BatchDataset& input, std::vector<ElementDataset*> co
                         delete mon; // Delete clone
                     }
 
+                    std::vector<double> _dm = std::vector<double>(batch_size, domain);
+                    ElementDataset* dm = new NormalDataset(_dm);
+
+                    *(el) *= *(dm); // Multiply with domain
+
                     result.push_back(el);
 
                     delete data[i][j][k];
                     delete _base_x;
                     delete _pow_x;
-                    delete dn;
+                    delete dd;
+                    delete dm;
                 }
 
                 sub_output.push_back(result);

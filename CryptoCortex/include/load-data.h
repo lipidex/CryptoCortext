@@ -15,6 +15,8 @@ private:
 
     static std::vector<ElementDataset*> load_bias(HEops heops, char* filename);
 
+    static std::vector<ElementDataset*> load_poly(HEops heops, char* filename);
+
 public:
     static std::vector<std::vector<ElementDataset*>> load_dense_kernel(HEops heops, int level, size_t rows, size_t cols);
     
