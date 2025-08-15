@@ -15,7 +15,7 @@ public:
 
     static void poly_relu(BatchDataset& input);
 
-    static void apply_poly(BatchDataset& input, std::vector<ElementDataset*> consts);
+    static void apply_poly(BatchDataset& input, std::vector<ElementDataset*> consts, std::vector<ElementDataset*> domain);
 
     static void avg_pooling(BatchDataset& input, size_t filter_rows, size_t filter_cols, size_t stride_rows, size_t stride_cols, ElementDataset* divisor);
 

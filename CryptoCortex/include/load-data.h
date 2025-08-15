@@ -17,6 +17,8 @@ private:
 
     static std::vector<ElementDataset*> load_poly(HEops heops, char* filename);
 
+    static std::vector<ElementDataset*> load_domain(HEops heops, char* filename);
+
 public:
     static std::vector<std::vector<ElementDataset*>> load_dense_kernel(HEops heops, int level, size_t rows, size_t cols);
     
@@ -27,6 +29,8 @@ public:
     static std::vector<ElementDataset*> load_conv_bias(HEops heops, int level);
 
     static std::vector<ElementDataset*> load_poly_consts(HEops heops, int level);
+
+    static std::vector<ElementDataset*> load_poly_domain(HEops heops, int level);
 
     static std::vector<BatchDataset> load_dataset_x(HEops heops, const char* filename, size_t batch_size, size_t rows, size_t cols, size_t channels);
 

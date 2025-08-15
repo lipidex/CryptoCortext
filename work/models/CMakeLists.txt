@@ -13,6 +13,8 @@ include_directories(../../libnpy/include/)
 include_directories(../../json/include/)
 include_directories(../../CryptoCortex/include/)
 
+find_package(OpenMP)
+
 # Include all the henn files
 file(GLOB_RECURSE SOURCE_FILES "../../CryptoCortex/src/*.cpp")
 

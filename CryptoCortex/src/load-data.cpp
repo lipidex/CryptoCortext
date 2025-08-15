@@ -4,6 +4,7 @@
 #include <plain-dataset.h>
 #include <encrypted-dataset.h>
 #include <config.h>
+#include <filesystem>
 
 #include <npy.hpp>
 
@@ -139,7 +140,7 @@ std::vector<ElementDataset*> LoadData::load_poly(HEops heops, char* filename)
 {
     std::vector<double> _npy_d = npy::read_npy<double>(filename).data;
 
-    std::vector<ElementDataset*> _biases;
+    std::vector<ElementDataset*> _consts;
     for (int i=0; i<_npy_d.size(); i++)
     {
         ElementDataset* el;
@@ -148,13 +149,41 @@ std::vector<ElementDataset*> LoadData::load_poly(HEops heops, char* filename)
         else
             el = static_cast<ElementDataset*>(new NormalDataset(std::vector<double>(batch_size, _npy_d[i])));
         
-        _biases.push_back(el);
+        _consts.push_back(el);
     }
 
-    printf("Size: %ld\n", _biases.size());
+    printf("Size: %ld\n", _consts.size());
     std::cout << std::endl;
 
-    return _biases;
+    return _consts;
+}
+
+std::vector<ElementDataset*> LoadData::load_domain(HEops heops, char* filename)
+{
+    std::vector<ElementDataset*> _domain;
+    // Check if file exists
+    if (!std::filesystem::exists(filename))
+    {
+        return _domain; 
+    }
+
+    std::vector<double> _npy_d = npy::read_npy<double>(filename).data;
+    
+    for (int i=0; i<_npy_d.size(); i++)
+    {
+        ElementDataset* el;
+        if (enable_helib)
+            el = static_cast<ElementDataset*>(new PlainDataset(heops.plaintext(std::vector<double>(batch_size, _npy_d[i]))));
+        else
+            el = static_cast<ElementDataset*>(new NormalDataset(std::vector<double>(batch_size, _npy_d[i])));
+        
+        _domain.push_back(el);
+    }
+
+    printf("Size: %ld\n", _domain.size());
+    std::cout << std::endl;
+
+    return _domain;
 }
 
 std::vector<ElementDataset*> LoadData::load_dense_bias(HEops heops, int level)
@@ -188,6 +217,17 @@ std::vector<ElementDataset*> LoadData::load_poly_consts(HEops heops, int level)
     printf("Filename: %s\n", filename);
 
     return load_poly(heops, filename);
+}
+
+std::vector<ElementDataset*> LoadData::load_poly_domain(HEops heops, int level)
+{
+    printf("Poly domain %d\n", level+1);
+
+    char filename[50];
+    sprintf(filename, "model/poly_domain_%d.npy", level);
+    printf("Filename: %s\n", filename);
+
+    return load_domain(heops, filename);
 }
 
 std::vector<BatchDataset> LoadData::load_dataset_x(HEops heops, const char* filename, size_t batch_size, size_t rows, size_t cols, size_t channels)

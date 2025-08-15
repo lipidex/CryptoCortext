@@ -202,9 +202,9 @@ void Operations::poly_relu(BatchDataset& input)
     input.execute(op);
 }
 
-void Operations::apply_poly(BatchDataset& input, std::vector<ElementDataset*> consts)
+void Operations::apply_poly(BatchDataset& input, std::vector<ElementDataset*> consts, std::vector<ElementDataset*> domain)
 {
-    simple_lambda op = [consts](std::vector<std::vector<std::vector<ElementDataset*>>> data)
+    simple_lambda op = [consts, domain](std::vector<std::vector<std::vector<ElementDataset*>>> data)
     {
         std::vector<std::vector<std::vector<ElementDataset*>>> output;
 
@@ -220,11 +220,10 @@ void Operations::apply_poly(BatchDataset& input, std::vector<ElementDataset*> co
                 {
                     ElementDataset* _pow_x = data[i][j][k]->clone();
 
-                    double domain = 14.29;
-
-                    std::vector<double> _dd = std::vector<double>(batch_size, 1/domain);
-                    ElementDataset* dd = new NormalDataset(_dd);
-                    *(_pow_x) *= *(dd); // Contain final result
+                    if (domain.size() == 2)
+                    {
+                        *(_pow_x) *= *(domain[0]); // Contain final result
+                    }
 
                     ElementDataset* _base_x = _pow_x->clone(); // Contain initial value of x
                     // ElementDataset* _pow_x = el->clone(); // Contain multiple of x
@@ -241,22 +240,30 @@ void Operations::apply_poly(BatchDataset& input, std::vector<ElementDataset*> co
 
                         *(mon) *= *(consts[v]); // Multiply with constant
 
-                        *(el) += *(mon); // Add to result
-                        delete mon; // Delete clone
+                        if (v == 1) // FIX: segfault
+                        {
+                            ElementDataset* tmp;
+                            tmp = el;
+                            el = mon;
+                            *(el) += *(tmp);
+                        }
+                        else
+                        {
+                            *(el) += *(mon); // Add to result
+                            delete mon; // Delete clone
+                        }
                     }
 
-                    std::vector<double> _dm = std::vector<double>(batch_size, domain);
-                    ElementDataset* dm = new NormalDataset(_dm);
-
-                    *(el) *= *(dm); // Multiply with domain
+                    if (domain.size() == 2)
+                    {
+                        *(el) *= *(domain[1]); // Multiply with domain
+                    }
 
                     result.push_back(el);
 
                     delete data[i][j][k];
                     delete _base_x;
                     delete _pow_x;
-                    delete dd;
-                    delete dm;
                 }
 
                 sub_output.push_back(result);

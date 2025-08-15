@@ -13,6 +13,7 @@ class Act : public Layer {
 private:
     HEops* _heops;
     std::vector<ElementDataset*> consts;
+    std::vector<ElementDataset*> domain;
 
 public:
     Act();

@@ -13,13 +13,15 @@ Act::Act(HEops* heops, int level)
     _heops = heops;
 
     consts = LoadData::load_poly_consts(*_heops, level);
+    
+    domain = LoadData::load_poly_domain(*_heops, level);
 }
 
 void Act::calculate(BatchDataset& input)
 {
     HELIB_NTIMER_START(tm_dense);
     
-    Operations::apply_poly(input, consts);
+    Operations::apply_poly(input, consts, domain);
     
     HELIB_NTIMER_STOP(tm_dense);
     if (tm_verbose)

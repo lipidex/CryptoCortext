@@ -12,7 +12,7 @@ inline bool main_verbose = false;
 inline size_t batch_size = 4096 / 4;
 
 // HElib
-inline bool enable_helib = false;
-inline bool enable_enc = false;
+inline bool enable_helib = true;
+inline bool enable_enc = true;
 
 #endif // CONFIG_H
