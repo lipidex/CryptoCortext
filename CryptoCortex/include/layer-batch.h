@@ -13,8 +13,7 @@ class Batch : public Layer {
 private:
     HEops* _heops;
     std::vector<ElementDataset*> mean;
-    std::vector<ElementDataset*> variance;
-    std::vector<ElementDataset*> gamma;
+    std::vector<ElementDataset*> gamma_variance;
     std::vector<ElementDataset*> beta;
 
 public:

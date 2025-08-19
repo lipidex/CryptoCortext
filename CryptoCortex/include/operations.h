@@ -17,7 +17,7 @@ public:
 
     static void apply_poly(BatchDataset& input, std::vector<ElementDataset*> consts, std::vector<ElementDataset*> domain);
 
-    static void batch_normalization(BatchDataset& input, std::vector<ElementDataset*>& mean, std::vector<ElementDataset*>& variance, std::vector<ElementDataset*>& gamma, std::vector<ElementDataset*>& beta, double epsilon = 1e-5);
+    static void batch_normalization(BatchDataset& input, std::vector<ElementDataset*>& mean, std::vector<ElementDataset*>& gamma_variance, std::vector<ElementDataset*>& beta);
 
     static void avg_pooling(BatchDataset& input, size_t filter_rows, size_t filter_cols, size_t stride_rows, size_t stride_cols, ElementDataset* divisor);
 

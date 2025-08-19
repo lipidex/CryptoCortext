@@ -264,12 +264,12 @@ std::vector<ElementDataset*> LoadData::load_batch_beta(HEops heops, int level)
     return load_vars(heops, filename);
 }
 
-std::vector<ElementDataset*> LoadData::load_batch_gamma(HEops heops, int level)
+std::vector<ElementDataset*> LoadData::load_batch_gamma_variance(HEops heops, int level)
 {
     printf("Batch gamma %d\n", level+1);
 
-    char filename[50];
-    sprintf(filename, "model/batch_normalization_%d_gamma.npy", level);
+    char filename[60];
+    sprintf(filename, "model/batch_normalization_%d_moving_variance_gamma.npy", level);
     printf("Filename: %s\n", filename);
 
     return load_vars(heops, filename);
@@ -281,17 +281,6 @@ std::vector<ElementDataset*> LoadData::load_batch_mean(HEops heops, int level)
 
     char filename[50];
     sprintf(filename, "model/batch_normalization_%d_moving_mean.npy", level);
-    printf("Filename: %s\n", filename);
-
-    return load_vars(heops, filename);
-}
-
-std::vector<ElementDataset*> LoadData::load_batch_variance(HEops heops, int level)
-{
-    printf("Batch variance %d\n", level+1);
-
-    char filename[50];
-    sprintf(filename, "model/batch_normalization_%d_moving_variance.npy", level);
     printf("Filename: %s\n", filename);
 
     return load_vars(heops, filename);

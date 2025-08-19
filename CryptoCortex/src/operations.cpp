@@ -279,23 +279,20 @@ void Operations::apply_poly(BatchDataset& input, std::vector<ElementDataset*> co
 }
 
 void Operations::batch_normalization(BatchDataset& input, 
-                                    std::vector<ElementDataset*>& mean, 
-                                    std::vector<ElementDataset*>& variance, 
-                                    std::vector<ElementDataset*>& gamma, 
-                                    std::vector<ElementDataset*>& beta, 
-                                    double epsilon)
+                                    std::vector<ElementDataset*>& mean,
+                                    std::vector<ElementDataset*>& gamma_variance,
+                                    std::vector<ElementDataset*>& beta)
 {
-    simple_lambda op = [mean, variance, gamma, beta, epsilon](std::vector<std::vector<std::vector<ElementDataset*>>> data)
+    simple_lambda op = [mean, gamma_variance, beta](std::vector<std::vector<std::vector<ElementDataset*>>> data)
     {
         for (size_t i = 0; i < data.size(); ++i) {
             for (size_t j = 0; j < data[i].size(); ++j) {
                 for (size_t k = 0; k < data[i][j].size(); ++k) {
                     // mena is negated before exporting
-                    // variance is precalculated and put in denominator
-                    // BN: y = gamma * (x + (precalculated mean)) * (precalculated variance) + beta
+                    // gamma/variance prealculate gamma/sqrt(variance+epsilon) 
+                    // BN: y = (x + (precalculated mean)) * (precalculated gamma/variance) + beta
                     *(data[i][j][k]) += *(mean[k]);
-                    *(data[i][j][k]) *= *(variance[k]);
-                    *(data[i][j][k]) *= *(gamma[k]);
+                    *(data[i][j][k]) *= *(gamma_variance[k]);
                     *(data[i][j][k]) += *(beta[k]);
                 }
             }

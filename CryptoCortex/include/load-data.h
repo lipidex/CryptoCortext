@@ -32,11 +32,9 @@ public:
 
     static std::vector<ElementDataset*> load_batch_beta(HEops heops, int level);
 
-    static std::vector<ElementDataset*> load_batch_gamma(HEops heops, int level);
+    static std::vector<ElementDataset*> load_batch_gamma_variance(HEops heops, int level);
 
     static std::vector<ElementDataset*> load_batch_mean(HEops heops, int level);
-
-    static std::vector<ElementDataset*> load_batch_variance(HEops heops, int level);
 
     static std::vector<ElementDataset*> load_poly_consts(HEops heops, int level);
 

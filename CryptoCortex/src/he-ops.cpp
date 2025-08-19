@@ -12,9 +12,9 @@ HEops::HEops()
     // Cyclotomic polynomial - defines phi(m)
     long m = 4 * batch_size;
     // Number of bits of the modulus chain
-    long bits = 2234; // prec: 170
+    long bits = 3000; // 2234; // prec: 170
     // Number of bits of precision when data is encoded, encrypted, or decrypted
-    long prec = 52;
+    long prec = 51;
     // Number of columns of Key-Switching matrix (typically 2 or 3)
     long c = 2;
 
