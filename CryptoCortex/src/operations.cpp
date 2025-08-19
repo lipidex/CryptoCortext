@@ -278,6 +278,34 @@ void Operations::apply_poly(BatchDataset& input, std::vector<ElementDataset*> co
     input.execute(op);
 }
 
+void Operations::batch_normalization(BatchDataset& input, 
+                                    std::vector<ElementDataset*>& mean, 
+                                    std::vector<ElementDataset*>& variance, 
+                                    std::vector<ElementDataset*>& gamma, 
+                                    std::vector<ElementDataset*>& beta, 
+                                    double epsilon)
+{
+    simple_lambda op = [mean, variance, gamma, beta, epsilon](std::vector<std::vector<std::vector<ElementDataset*>>> data)
+    {
+        for (size_t i = 0; i < data.size(); ++i) {
+            for (size_t j = 0; j < data[i].size(); ++j) {
+                for (size_t k = 0; k < data[i][j].size(); ++k) {
+                    // mena is negated before exporting
+                    // variance is precalculated and put in denominator
+                    // BN: y = gamma * (x + (precalculated mean)) * (precalculated variance) + beta
+                    *(data[i][j][k]) += *(mean[k]);
+                    *(data[i][j][k]) *= *(variance[k]);
+                    *(data[i][j][k]) *= *(gamma[k]);
+                    *(data[i][j][k]) += *(beta[k]);
+                }
+            }
+        }
+        return data;
+    };
+
+    input.execute(op);
+}
+
 void Operations::avg_pooling(BatchDataset& input, size_t filter_rows, size_t filter_cols, size_t stride_rows, size_t stride_cols, ElementDataset* divisor)
 {
     simple_lambda op = [filter_rows, filter_cols, stride_rows, stride_cols, divisor](std::vector<std::vector<std::vector<ElementDataset*>>> data)
@@ -349,7 +377,8 @@ void Operations::matrix_conv_multiply(BatchDataset& input, std::vector<std::vect
                         {
                             for (size_t n=0; n<weights[k][l][m].size(); n++) // fetch channel out
                             {
-                                ElementDataset* el = data[i+(k*stride_rows)][j+(l*stride_cols)][m]->clone();
+                                // ElementDataset* el = data[i+(k*stride_rows)][j+(l*stride_cols)][m]->clone();
+                                ElementDataset* el = data[i*stride_rows + k][j*stride_cols + l][m]->clone();
                                 // printf("%f\n", el->get_data()[0]);
                                 // printf("%f\n", weights[k][l][m][n]->get_data()[0]);
 

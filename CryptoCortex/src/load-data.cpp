@@ -164,6 +164,7 @@ std::vector<ElementDataset*> LoadData::load_domain(HEops heops, char* filename)
     // Check if file exists
     if (!std::filesystem::exists(filename))
     {
+        printf("No domain available!");
         return _domain; 
     }
 
@@ -184,6 +185,28 @@ std::vector<ElementDataset*> LoadData::load_domain(HEops heops, char* filename)
     std::cout << std::endl;
 
     return _domain;
+}
+
+std::vector<ElementDataset*> LoadData::load_vars(HEops heops, char* filename)
+{
+    std::vector<float> _npy_d = npy::read_npy<float>(filename).data;
+
+    std::vector<ElementDataset*> _vars;
+    for (int i=0; i<_npy_d.size(); i++)
+    {
+        ElementDataset* el;
+        if (enable_helib)
+            el = static_cast<ElementDataset*>(new PlainDataset(heops.plaintext(std::vector<double>(batch_size, static_cast<double>(_npy_d[i])))));
+        else
+            el = static_cast<ElementDataset*>(new NormalDataset(std::vector<double>(batch_size, static_cast<double>(_npy_d[i]))));
+        
+        _vars.push_back(el);
+    }
+
+    printf("Size: %ld\n", _vars.size());
+    std::cout << std::endl;
+
+    return _vars;
 }
 
 std::vector<ElementDataset*> LoadData::load_dense_bias(HEops heops, int level)
@@ -229,6 +252,51 @@ std::vector<ElementDataset*> LoadData::load_poly_domain(HEops heops, int level)
 
     return load_domain(heops, filename);
 }
+
+std::vector<ElementDataset*> LoadData::load_batch_beta(HEops heops, int level)
+{
+    printf("Batch beta %d\n", level+1);
+
+    char filename[50];
+    sprintf(filename, "model/batch_normalization_%d_beta.npy", level);
+    printf("Filename: %s\n", filename);
+
+    return load_vars(heops, filename);
+}
+
+std::vector<ElementDataset*> LoadData::load_batch_gamma(HEops heops, int level)
+{
+    printf("Batch gamma %d\n", level+1);
+
+    char filename[50];
+    sprintf(filename, "model/batch_normalization_%d_gamma.npy", level);
+    printf("Filename: %s\n", filename);
+
+    return load_vars(heops, filename);
+}
+
+std::vector<ElementDataset*> LoadData::load_batch_mean(HEops heops, int level)
+{
+    printf("Batch mean %d\n", level+1);
+
+    char filename[50];
+    sprintf(filename, "model/batch_normalization_%d_moving_mean.npy", level);
+    printf("Filename: %s\n", filename);
+
+    return load_vars(heops, filename);
+}
+
+std::vector<ElementDataset*> LoadData::load_batch_variance(HEops heops, int level)
+{
+    printf("Batch variance %d\n", level+1);
+
+    char filename[50];
+    sprintf(filename, "model/batch_normalization_%d_moving_variance.npy", level);
+    printf("Filename: %s\n", filename);
+
+    return load_vars(heops, filename);
+}
+
 
 std::vector<BatchDataset> LoadData::load_dataset_x(HEops heops, const char* filename, size_t batch_size, size_t rows, size_t cols, size_t channels)
 {

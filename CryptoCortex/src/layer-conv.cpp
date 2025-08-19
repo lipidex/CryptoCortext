@@ -8,11 +8,11 @@
 
 Conv::Conv() {}
 
-Conv::Conv(HEops* heops, int level, size_t kernel_rows, size_t kernel_cols, size_t in_channels, size_t out_channels, bool relu, bool squared)
+Conv::Conv(HEops* heops, int level, size_t kernel_rows, size_t kernel_cols, size_t in_channels, size_t out_channels, size_t stride_rows, size_t stride_cols)
 {
     _heops = heops;
-    _relu = relu;
-    _squared = squared;
+    _stride_rows = stride_rows;
+    _stride_cols = stride_cols;
 
     weights = LoadData::load_conv_kernel(*_heops, level, kernel_rows, kernel_cols, in_channels, out_channels);
     biases = LoadData::load_conv_bias(*_heops, level);
@@ -22,15 +22,9 @@ void Conv::calculate(BatchDataset& input)
 {
     HELIB_NTIMER_START(tm_dense);
     
-    Operations::matrix_conv_multiply(input, weights, 1, 1);
+    Operations::matrix_conv_multiply(input, weights, _stride_rows, _stride_cols);
 
     Operations::add_conv_vectors(input, biases);
-
-    if (_relu)
-        Operations::poly_relu(input);
-
-    if (_squared)
-        Operations::square_product(input);
     
     HELIB_NTIMER_STOP(tm_dense);
     if (tm_verbose)
