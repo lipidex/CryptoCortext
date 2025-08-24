@@ -11,15 +11,15 @@
 
 class LoadData {
 private:
-    static std::vector<ElementDataset*> load_kernel(HEops heops, char* filename, size_t size);
+    static std::vector<ElementDataset*> load_kernel(HEops heops, std::string filename, size_t size);
 
-    static std::vector<ElementDataset*> load_bias(HEops heops, char* filename);
+    static std::vector<ElementDataset*> load_bias(HEops heops, std::string filename);
 
-    static std::vector<ElementDataset*> load_poly(HEops heops, char* filename);
+    static std::vector<ElementDataset*> load_poly(HEops heops, std::string filename);
 
-    static std::vector<ElementDataset*> load_domain(HEops heops, char* filename);
+    static std::vector<ElementDataset*> load_domain(HEops heops, std::string filename);
 
-    static std::vector<ElementDataset*> load_vars(HEops heops, char* filename);
+    static std::vector<ElementDataset*> load_vars(HEops heops, std::string filename);
 
 public:
     static std::vector<std::vector<ElementDataset*>> load_dense_kernel(HEops heops, int level, size_t rows, size_t cols);
@@ -40,9 +40,9 @@ public:
 
     static std::vector<ElementDataset*> load_poly_domain(HEops heops, int level);
 
-    static std::vector<BatchDataset> load_dataset_x(HEops heops, const char* filename, size_t batch_size, size_t rows, size_t cols, size_t channels);
+    static std::vector<BatchDataset> load_dataset_x(HEops heops, std::string filename, size_t batch_size, size_t rows, size_t cols, size_t channels);
 
-    static std::vector<long> load_dataset_y(const char* filename, size_t rows);
+    static std::vector<long> load_dataset_y(std::string filename, size_t rows);
 };
 
 #endif // LOADDATA_H

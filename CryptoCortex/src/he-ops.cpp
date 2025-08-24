@@ -7,16 +7,13 @@
 #include <plain-dataset.h>
 #include <encrypted-dataset.h>
 
-HEops::HEops()
+// bits -> Number of bits of the modulus chain
+// prec -> Number of bits of precision when data is encoded, encrypted, or decrypted
+// c -> Number of columns of Key-Switching matrix (typically 2 or 3)
+HEops::HEops(long bits, long prec, long c, std::string model_base_path) : _model_base_path(model_base_path)
 {
     // Cyclotomic polynomial - defines phi(m)
-    long m = 4 * batch_size;
-    // Number of bits of the modulus chain
-    long bits = 3000; // 2234; // prec: 170
-    // Number of bits of precision when data is encoded, encrypted, or decrypted
-    long prec = 51;
-    // Number of columns of Key-Switching matrix (typically 2 or 3)
-    long c = 2;
+    long m = 4 * batch_size;    
 
     std::cout << "Initialising context object..." << std::endl;
     // Context

@@ -9,7 +9,7 @@ inline bool he_verbose = false;
 inline bool main_verbose = false;
 
 // Batch size
-inline size_t batch_size = 4096 / 4;
+inline size_t batch_size = 4096 * 2;
 
 // HElib
 inline bool enable_helib = true;

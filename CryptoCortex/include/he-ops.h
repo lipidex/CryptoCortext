@@ -13,7 +13,9 @@ private:
     const helib::EncryptedArray* ea;
 
 public:
-    HEops();
+    const std::string _model_base_path;
+
+    HEops(long bits, long prec, long c, std::string model_base_path);
 
     helib::PtxtArray plaintext(std::vector<double> data);
 

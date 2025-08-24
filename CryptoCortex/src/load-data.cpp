@@ -8,7 +8,7 @@
 
 #include <npy.hpp>
 
-std::vector<ElementDataset*> LoadData::load_kernel(HEops heops, char* filename, size_t size)
+std::vector<ElementDataset*> LoadData::load_kernel(HEops heops, std::string filename, size_t size)
 {   
     std::vector<float> _weights = npy::read_npy<float>(filename).data;
 
@@ -39,9 +39,8 @@ std::vector<std::vector<ElementDataset*>> LoadData::load_dense_kernel(HEops heop
 {
     printf("Dense kernel %d\n", level+1);
 
-    char filename[50];
-    sprintf(filename, "model/dense_%d_kernel.npy", level);
-    printf("Filename: %s\n", filename);
+    std::string filename = "model/" + heops._model_base_path + "/dense_" + std::to_string(level) + "_kernel.npy";
+    printf("Filename: %s\n", filename.c_str());
     
     std::vector<ElementDataset*> _weights = load_kernel(heops, filename, rows * cols);
 
@@ -68,9 +67,8 @@ std::vector<std::vector<std::vector<std::vector<ElementDataset*>>>> LoadData::lo
 {
     printf("Conv kernel %d\n", level+1);
 
-    char filename[50];
-    sprintf(filename, "model/conv2d_%d_kernel.npy", level);
-    printf("Filename: %s\n", filename);
+    std::string filename = "model/" + heops._model_base_path + "/conv2d_" + std::to_string(level) + "_kernel.npy";
+    printf("Filename: %s\n", filename.c_str());
     
     std::vector<ElementDataset*> _weights = load_kernel(heops, filename, kernel_rows * kernel_cols * in_channels * out_channels);
 
@@ -114,7 +112,7 @@ std::vector<std::vector<std::vector<std::vector<ElementDataset*>>>> LoadData::lo
     return weights;
 }
 
-std::vector<ElementDataset*> LoadData::load_bias(HEops heops, char* filename)
+std::vector<ElementDataset*> LoadData::load_bias(HEops heops, std::string filename)
 {
     std::vector<float> _npy_d = npy::read_npy<float>(filename).data;
 
@@ -136,7 +134,7 @@ std::vector<ElementDataset*> LoadData::load_bias(HEops heops, char* filename)
     return _biases;
 }
 
-std::vector<ElementDataset*> LoadData::load_poly(HEops heops, char* filename)
+std::vector<ElementDataset*> LoadData::load_poly(HEops heops, std::string filename)
 {
     std::vector<double> _npy_d = npy::read_npy<double>(filename).data;
 
@@ -158,7 +156,7 @@ std::vector<ElementDataset*> LoadData::load_poly(HEops heops, char* filename)
     return _consts;
 }
 
-std::vector<ElementDataset*> LoadData::load_domain(HEops heops, char* filename)
+std::vector<ElementDataset*> LoadData::load_domain(HEops heops, std::string filename)
 {
     std::vector<ElementDataset*> _domain;
     // Check if file exists
@@ -187,7 +185,7 @@ std::vector<ElementDataset*> LoadData::load_domain(HEops heops, char* filename)
     return _domain;
 }
 
-std::vector<ElementDataset*> LoadData::load_vars(HEops heops, char* filename)
+std::vector<ElementDataset*> LoadData::load_vars(HEops heops, std::string filename)
 {
     std::vector<float> _npy_d = npy::read_npy<float>(filename).data;
 
@@ -213,9 +211,8 @@ std::vector<ElementDataset*> LoadData::load_dense_bias(HEops heops, int level)
 {
     printf("Dense bias %d\n", level+1);
 
-    char filename[50];
-    sprintf(filename, "model/dense_%d_bias.npy", level);
-    printf("Filename: %s\n", filename);
+    std::string filename = "model/" + heops._model_base_path + "/dense_" + std::to_string(level) + "_bias.npy";
+    printf("Filename: %s\n", filename.c_str());
 
     return load_bias(heops, filename);
 }
@@ -224,9 +221,8 @@ std::vector<ElementDataset*> LoadData::load_conv_bias(HEops heops, int level)
 {
     printf("Conv bias %d\n", level+1);
 
-    char filename[50];
-    sprintf(filename, "model/conv2d_%d_bias.npy", level);
-    printf("Filename: %s\n", filename);
+    std::string filename = "model/" + heops._model_base_path + "/conv2d_" + std::to_string(level) + "_bias.npy";
+    printf("Filename: %s\n", filename.c_str());
 
     return load_bias(heops, filename);
 }
@@ -235,9 +231,8 @@ std::vector<ElementDataset*> LoadData::load_poly_consts(HEops heops, int level)
 {
     printf("Poly consts %d\n", level+1);
 
-    char filename[50];
-    sprintf(filename, "model/poly_consts_%d.npy", level);
-    printf("Filename: %s\n", filename);
+    std::string filename = "model/" + heops._model_base_path + "/poly_consts_" + std::to_string(level) + ".npy";
+    printf("Filename: %s\n", filename.c_str());
 
     return load_poly(heops, filename);
 }
@@ -246,9 +241,8 @@ std::vector<ElementDataset*> LoadData::load_poly_domain(HEops heops, int level)
 {
     printf("Poly domain %d\n", level+1);
 
-    char filename[50];
-    sprintf(filename, "model/poly_domain_%d.npy", level);
-    printf("Filename: %s\n", filename);
+    std::string filename = "model/" + heops._model_base_path + "/poly_domain_" + std::to_string(level) + ".npy";
+    printf("Filename: %s\n", filename.c_str());
 
     return load_domain(heops, filename);
 }
@@ -257,9 +251,8 @@ std::vector<ElementDataset*> LoadData::load_batch_beta(HEops heops, int level)
 {
     printf("Batch beta %d\n", level+1);
 
-    char filename[50];
-    sprintf(filename, "model/batch_normalization_%d_beta.npy", level);
-    printf("Filename: %s\n", filename);
+    std::string filename = "model/" + heops._model_base_path + "/batch_normalization_" + std::to_string(level) + "_beta.npy";
+    printf("Filename: %s\n", filename.c_str());
 
     return load_vars(heops, filename);
 }
@@ -268,9 +261,8 @@ std::vector<ElementDataset*> LoadData::load_batch_gamma_variance(HEops heops, in
 {
     printf("Batch gamma %d\n", level+1);
 
-    char filename[60];
-    sprintf(filename, "model/batch_normalization_%d_moving_variance_gamma.npy", level);
-    printf("Filename: %s\n", filename);
+    std::string filename = "model/" + heops._model_base_path + "/batch_normalization_" + std::to_string(level) + "_moving_variance_gamma.npy";
+    printf("Filename: %s\n", filename.c_str());
 
     return load_vars(heops, filename);
 }
@@ -279,15 +271,14 @@ std::vector<ElementDataset*> LoadData::load_batch_mean(HEops heops, int level)
 {
     printf("Batch mean %d\n", level+1);
 
-    char filename[50];
-    sprintf(filename, "model/batch_normalization_%d_moving_mean.npy", level);
-    printf("Filename: %s\n", filename);
+    std::string filename = "model/" + heops._model_base_path + "/batch_normalization_" + std::to_string(level) + "_moving_mean.npy";
+    printf("Filename: %s\n", filename.c_str());
 
     return load_vars(heops, filename);
 }
 
 
-std::vector<BatchDataset> LoadData::load_dataset_x(HEops heops, const char* filename, size_t batch_size, size_t rows, size_t cols, size_t channels)
+std::vector<BatchDataset> LoadData::load_dataset_x(HEops heops, std::string filename, size_t batch_size, size_t rows, size_t cols, size_t channels)
 {
     std::vector<float> input = npy::read_npy<float>(filename).data;
 
@@ -351,7 +342,7 @@ std::vector<BatchDataset> LoadData::load_dataset_x(HEops heops, const char* file
     return ds;
 }
 
-std::vector<long> LoadData::load_dataset_y(const char* filename, size_t rows)
+std::vector<long> LoadData::load_dataset_y(std::string filename, size_t rows)
 {
     std::vector<long> input = npy::read_npy<long>(filename).data;
     // printf("%s\n", typeid(input).name());

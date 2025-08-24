@@ -10,7 +10,12 @@
 
 int main()
 {
-    HEops heops;
+    std::string model_base_path = "relu_nn_2";
+    long bits = 358;
+    long prec = 23;
+    long c = 2;
+
+    HEops heops(bits, prec, c, model_base_path);
 
     std::vector<Layer*> layers;
     layers.push_back(new Flatter());
@@ -23,11 +28,11 @@ int main()
 
     // Load test dataset
     printf("Loading test_x dataset...\n");
-    std::vector<BatchDataset> test_x = LoadData::load_dataset_x(heops, "model/test_x.npy", batch_size, 28, 28, 1);
+    std::vector<BatchDataset> test_x = LoadData::load_dataset_x(heops, "model/" + model_base_path + "/test_x.npy", batch_size, 28, 28, 1);
     printf("Loaded test_x dataset!\n");
 
     printf("Loading test_y dataset...\n");
-    std::vector<long> test_y = LoadData::load_dataset_y("model/test_y.npy", num_el);
+    std::vector<long> test_y = LoadData::load_dataset_y("model/" + model_base_path + "/test_y.npy", num_el);
     printf("Loaded test_y dataset!\n");
 
     size_t num_batch = test_x.size();
