@@ -12,10 +12,10 @@
 
 int main()
 {
-    std::string model_base_path = "softplus_cnn_10";
-    long bits = 3000; // 2234; // prec: 170
-    long prec = 53;
-    long c = 3;
+    std::string model_base_path = "softplus_cnn_7";
+    long bits = 2234; // prec: 170
+    long prec = 46;
+    long c = 2;
     
     HEops heops(bits, prec, c, model_base_path);
 
